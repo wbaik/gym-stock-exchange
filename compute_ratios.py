@@ -1,11 +1,11 @@
+from dateutil import parser
+from functools import reduce
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import random
-from datetime import datetime
-from dateutil import parser
+
 from postgres_utils import PostgresPandas
-import matplotlib.pyplot as plt
-from functools import reduce
 
 
 compound = lambda x: (1 + x).prod() - 1
@@ -34,15 +34,8 @@ def create_dataframes(symbols):
     return merged_date
 
 
-def to_index(rets):
-    index = (1+rets).cumprod()
 
-    first_loc = index.notnull().idxmax()
-    index[first_loc] = 1
-    return index
-
-
-def momentum_signal(df, lookback, lag, is_return=False):
+def momentum_signal(df, lookback, lag):
 
     def momentum_function(given_series):
         # can be lambda x: , or .apply(np.sum) ...
@@ -55,6 +48,13 @@ def momentum_signal(df, lookback, lag, is_return=False):
 
 
 def rolling_example():
+
+    def to_index(rets):
+        index = (1+rets).cumprod()
+
+        first_loc = index.notnull().idxmax()
+        index[first_loc] = 1
+        return index
 
     def sharpe(ret, ann=250):
         factor = np.sqrt(ann)
@@ -73,17 +73,14 @@ def rolling_example():
     every_friday_at_close = m_signal.resample('W-FRI').resample('B', fill_method='ffill').shift(1)
 
     trade_rets = every_friday_at_close.close * ret.close
-    to_index(trade_rets).plot()
-    plt.show()
+    to_index(trade_rets).plot(); plt.show()
     vol = ret['close'].rolling(250, 200).std()*np.sqrt(250)
-    vol.plot()
-    plt.show()
-    sharpe(ret.close).plot()
-    plt.show()
+    vol.plot(); plt.show()
+    sharpe(ret.close).plot(); plt.show()
 
 
 def calc_mom(price, lookback, lag):
-    # lag time is merely how many days to wait for, till the execution
+    # lag time is how many days to wait for, till the execution
     mom_ret = price.shift(lag).pct_change(lookback)
     ranks = mom_ret.rank(axis=1, ascending=False)
     demeaned = ranks.subtract(ranks.mean(axis=1), axis=0)
@@ -106,21 +103,22 @@ def strat_sr(prices, lb, hold):
     return daily_sr(port_rets) * np.sqrt(252 / hold)
 
 
+def heatmap(df, cmap=plt.cm.gray_r):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    axim = ax.imshow(df.values, cmap=cmap, interpolation='nearest')
+    ax.set_xlabel(df.columns.name)
+    ax.set_xticks(np.arange(len(df.columns)))
+    ax.set_xticklabels(list(df.columns))
+    ax.set_ylabel(df.index.name)
+    ax.set_yticks(np.arange(len(df.index)))
+    ax.set_yticklabels(list(df.index))
+    plt.colorbar(axim)
+    plt.show()
+
+
 def example_combine_lookback_holding():
     from collections import defaultdict
-
-    def heatmap(df, cmap=plt.cm.gray_r):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        axim = ax.imshow(df.values, cmap=cmap, interpolation='nearest')
-        ax.set_xlabel(df.columns.name)
-        ax.set_xticks(np.arange(len(df.columns)))
-        ax.set_xticklabels(list(df.columns))
-        ax.set_ylabel(df.index.name)
-        ax.set_yticks(np.arange(len(df.index)))
-        ax.set_yticklabels(list(df.index))
-        plt.colorbar(axim)
-        plt.show()
 
     queries = '''
                 select *
