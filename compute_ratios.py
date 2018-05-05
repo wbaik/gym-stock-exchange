@@ -16,13 +16,16 @@ def create_dataframes(symbols):
 
     to_merge = []
     for s in symbols:
-        queries = '''
-            select date, close
-            from {}
-            '''.format(s)
-        ret = ppd.run_query(queries)
-        ret.columns = ['date', str(s)]
-        to_merge.append(ret)
+        try:
+            queries = '''
+                select date, close
+                from {}
+                '''.format(s)
+            ret = ppd.run_query(queries)
+            ret.columns = ['date', str(s)]
+            to_merge.append(ret)
+        except:
+            print('*** Error occured on {}'.format(s))
 
     merged_date = reduce(lambda x, y:
                          pd.merge(x, y, on='date', how='outer'), to_merge)
