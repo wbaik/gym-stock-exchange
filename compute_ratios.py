@@ -25,7 +25,7 @@ def create_dataframes(symbols):
             ret.columns = ['date', str(s)]
             to_merge.append(ret)
         except:
-            print('*** Error occured on {}'.format(s))
+            print('*** Error occurred on {}'.format(s))
 
     merged_date = reduce(lambda x, y:
                          pd.merge(x, y, on='date', how='outer'), to_merge)
@@ -35,7 +35,6 @@ def create_dataframes(symbols):
     merged_date.set_index('date', inplace=True, drop=True)
 
     return merged_date
-
 
 
 def momentum_signal(df, lookback, lag):
@@ -69,7 +68,7 @@ def rolling_example():
                 from {};
                 '''.format('NOC')
     ret = ppd.run_query(queries)
-    ret['close'] = ret.close.pct_change()
+    ret.close = ret.close.pct_change()
 
     m_signal = momentum_signal(ret, 5, 5)
     m_signal.index = ret.index = ret['date'].map(lambda x: parser.parse(x))
@@ -77,7 +76,7 @@ def rolling_example():
 
     trade_rets = every_friday_at_close.close * ret.close
     to_index(trade_rets).plot(); plt.show()
-    vol = ret['close'].rolling(250, 200).std()*np.sqrt(250)
+    vol = ret.close.rolling(252, 200).std()*np.sqrt(252)
     vol.plot(); plt.show()
     sharpe(ret.close).plot(); plt.show()
 
@@ -94,6 +93,35 @@ def strat_sr(prices, lb, hold):
     # Compute portfolio weights
     freq = '%dB' % hold
     port = calc_mom(prices, lb, lag=1)
+
+    daily_rets = prices.pct_change()
+
+    # `resample` merely loops over for each freq
+    # Takes the first value of the resampled
+    port = port.shift(1).resample(freq).first() # shift 1 for trading at the close
+    returns = daily_rets.resample(freq).apply(compound)
+    port_rets = (port * returns).sum(axis=1)
+
+    return daily_sr(port_rets) * np.sqrt(252 / hold)
+
+
+def some_strategy(prices, lb, hold):
+
+    def get_portfolio_logic(price, lookback, lag):
+        momentum = price.shift(lag).pct_change(lookback)
+        ranks = momentum.rank(axis=1, ascending=False)
+        best_ten = lambda x: list(map(lambda y: y
+                                      if y > price.shape[1] - 10
+                                      else 0, x))
+        ranks = ranks.apply(best_ten, axis=1)
+        return ranks
+
+    compound = lambda x: (1 + x).prod() - 1
+    daily_sr = lambda x: x.mean() / x.std()
+
+    # Compute portfolio weights
+    freq = '%dB' % hold
+    port = get_portfolio_logic(prices, lb, lag=0)
 
     daily_rets = prices.pct_change()
 
