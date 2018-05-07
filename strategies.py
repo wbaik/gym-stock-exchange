@@ -41,16 +41,19 @@ def get_portfolio_logic(price, lookback, lag):
 def some_strategy(prices, lb, hold):
 
     # Compute portfolio weights
-    freq = '%dB' % hold
+    freq = '{}B'.format(hold)
     port = get_portfolio_logic(prices, lb, lag=0)
+    # Normalize
+    port = port.apply(lambda x: x/x.sum(), axis=1)
 
     daily_rets = prices.pct_change()
 
     port = port.shift(1).resample(freq).first() # shift 1 for trading at the close
     returns = daily_rets.resample(freq).apply(compound)
     port_rets = (port * returns).sum(axis=1)
+    port_rets.name = 'lookback:{}, hold:{}'.format(str(lb), str(hold))
 
-    return daily_sr(port_rets) * np.sqrt(252 / hold)
+    return daily_sr(port_rets) * np.sqrt(252 / hold), port_rets
 
 
 def test_some_strategy(prices, given_strategy, sector_name):
@@ -59,16 +62,23 @@ def test_some_strategy(prices, given_strategy, sector_name):
     holdings = range(30, 120, 10)
     dd = defaultdict(dict)
 
+    ret_d = []
     for lb in lookbacks:
         for hold in holdings:
-            dd[lb][hold] = given_strategy(prices, lb, hold)
+            dd[lb][hold], temp = given_strategy(prices, lb, hold)
+            ret_d.append(temp)
+
+    # ******** TERRIBLE, BUT FOR THE TIME BEING *********
+    ret_d = reduce(lambda x, y: pd.concat([x, y], axis=1), ret_d)
+    ret_d = ret_d.fillna(0)
+    ret_d = ret_d.apply(lambda x: x.cumsum())
 
     ddf = pd.DataFrame(dd)
     ddf.index.name = 'Holding Period'
     ddf.columns.name = 'Lookback Period'
-    # heatmap(ddf)
-    ddf.to_csv('./iexdata/{}_top_10_long_only_sharp_ratios'.format(sector_name))
 
+    ddf.to_csv('./iexdata/{}_top_10_long_only_sharp_ratios'.format(sector_name))
+    ret_d.to_csv('./iexdata/{}_top_10_long_only_return_df'.format(sector_name))
 
 def example():
     spx_table = pd.read_csv('./iexdata/10K_data.csv')
