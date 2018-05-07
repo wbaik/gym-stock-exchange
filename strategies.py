@@ -12,21 +12,6 @@ compound = lambda x: (1 + x).prod() - 1
 daily_sr = lambda x: x.mean() / x.std()
 
 
-def heatmap(df, cmap=plt.cm.gray_r):
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    axim = ax.imshow(df.values, cmap=cmap, interpolation='nearest')
-    ax.set_xlabel(df.columns.name)
-    ax.set_xticks(np.arange(len(df.columns)))
-    ax.set_xticklabels(list(df.columns))
-    ax.set_ylabel(df.index.name)
-    ax.set_yticks(np.arange(len(df.index)))
-    ax.set_yticklabels(list(df.index))
-    plt.colorbar(axim)
-    plt.show()
-
-
 def get_portfolio_logic(price, lookback, lag):
 
     momentum = price.shift(lag).pct_change(lookback)
@@ -79,6 +64,7 @@ def test_some_strategy(prices, given_strategy, sector_name):
 
     ddf.to_csv('./iexdata/{}_top_10_long_only_sharp_ratios'.format(sector_name))
     ret_d.to_csv('./iexdata/{}_top_10_long_only_return_df'.format(sector_name))
+
 
 def example():
     spx_table = pd.read_csv('./iexdata/10K_data.csv')
