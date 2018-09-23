@@ -1,2 +1,2 @@
-from gym_stock_exchange.engine.engine import Engine
+from gym_stock_exchange.engine.engine import Engine, Ticker
 

@@ -20,7 +20,8 @@ class Ticker:
         self.action_space = np.linspace(-1, 1, num_actions)
         self.today = 0 if today is None else today
         self._data_valid()
-        self.current_position = self.accumulated_pnl = 0.0
+        self.current_position = 0.0
+        self.accumulated_pnl = 0.0
 
     def _load_df(self, test):
         if test:
@@ -94,8 +95,7 @@ class Ticker:
             #                                 self.df.position[self.today-1] + new_position_delta
 
             # If we penalize invalid moves, the model learns to avoid it, but this deters
-            #     learning experiences. It only focuses on position such that it avoids penalty.
-            #     Penalty of -0.1 is certainly too high for this matter
+            #     learning experiences. Penalty of -0.1 is certainly too high for this matter
             #
             # if self.valid_action(action):
             #     new_position_delta = self.action_space[action]
@@ -134,12 +134,10 @@ class Ticker:
         market_data, position = self.get_state()
         # axis[0].scatter(self.today, self.df.pnl[self.today-1])
         axis[0].set_ylabel(f'Daily price: {self.ticker}')
-        axis[0].set_xlabel('Time step')
         axis[0].plot(np.arange(self.today), self.df.close[:self.today])
         # axis[1].scatter(self.today, position)
         # axis[2].scatter(self.today, self.accumulated_pnl)
         axis[1].set_ylabel(f'Daily return from Agent')
-        axis[1].set_xlabel('Time step')
         axis[1].scatter(self.today, self.df.pnl[self.today-1])
         plt.pause(0.001)
 
