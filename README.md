@@ -30,6 +30,8 @@ With a `random agent`, an output of `demo_stock_exchange.py` is like so:
 
 ![screenshot](img/random_agents.gif)
 
+With `stable-baselines`, `Advantage Actor Critic (A2C)` is used in the `demo_exchange.py` to train the model. An output of such is like so:
+![screenshot](img/a2c_agent.gif)
 
 ### gym_exchange vs gym_stock_exchange
 The two are seperated for the time being. With `gym_exchange`, 
