@@ -1,6 +1,6 @@
 # GYM-STOCK-EXCHANGE
 
-Implementing a `stock-exchange` environment in `gym` environment.
+Implementing a `stock-exchange` environment in `OPEN-AI`'s [gym](https://gym.openai.com/) environment.
 
 ### Installing
 To get started, you’ll need to have `Python 3.5+` installed. 
