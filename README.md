@@ -15,14 +15,15 @@ python3 demo_stock_exchange.py
 ```
 
 If you want to integrate `reinforcement learning agents`, I recommend using
-[baselines](https://github.com/openai/baselines/) or [stable baselines](https://github.com/hill-a/stable-baselines), described below.
+[baselines](https://github.com/openai/baselines/), [stable baselines](https://github.com/hill-a/stable-baselines), or [keras-rl](https://github.com/keras-rl/keras-rl) described below.
 
 ### Examples of Reinforcement Learnings
 This environment was created for the purpose of integrating with other 
 `reinforcement learning` 
-libraries. Namely, [baselines](https://github.com/openai/baselines/) 
-and [stable baselines](https://github.com/hill-a/stable-baselines) 
-are great possibilities.
+libraries. Namely, [baselines](https://github.com/openai/baselines/), 
+[stable baselines](https://github.com/hill-a/stable-baselines), or
+[keras-rl](https://github.com/keras-rl/keras-rl)
+are of great possibilities.
 `demo_exchange.py` has an example of how easy it is to integrate this `env` with 
 `stable baselines`. 
 
