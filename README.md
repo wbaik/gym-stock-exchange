@@ -17,7 +17,7 @@ python3 demo_stock_exchange.py
 If you want to integrate `reinforcement learning agents`, I recommend using
 `baselines` or `stable baselines`, described below.
 
-### Example of Reinforcement Learnings
+### Examples of Reinforcement Learnings
 This environment was created for the purpose of integrating with other 
 `reinforcement learning` 
 libraries. Namely, [baselines](https://github.com/openai/baselines/) 
