@@ -1,4 +1,4 @@
-# GYM-STOCK-EXCHANGE
+# Gym-Stock-Exchange
 
 Implementing a `stock-exchange` environment in `OPEN-AI`'s [gym](https://gym.openai.com/) environment.
 
