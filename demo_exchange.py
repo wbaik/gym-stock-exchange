@@ -17,7 +17,7 @@ if __name__ == '__main__':
     model.learning_rate = 1e-7
 
     # Train the agent
-    model.learn(total_timesteps=100)
+    model.learn(total_timesteps=100000)
 
     # Save the agent
     model.save("a2c_gym_exchange")
