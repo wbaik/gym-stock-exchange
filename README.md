@@ -16,11 +16,11 @@ python3 demo_exchange.py
 ```
 Explain what is where
 
-### Tensorflow
+### `Tensorflow`
 If you want to integrate `reinforcement learning agents`, I recommend using
 [baselines](https://github.com/openai/baselines/), or [stable baselines](https://github.com/hill-a/stable-baselines). These are based on `tensorflow`.
 
-### Fan of `PyTorch`?
+### `PyTorch`
 If you're a fan of `pytorch`, [stock-exchange-pytorch](https://github.com/wbaik/stock-exchange-pytorch) supports implementations for `reinforcement learning` and `supervised learning`. This repository is actually an offshoot of that project.
 
 ### Examples of Reinforcement Learnings
