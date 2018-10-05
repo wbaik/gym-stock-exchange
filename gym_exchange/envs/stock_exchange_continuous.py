@@ -1,57 +1,58 @@
 import gym
 import gym.spaces as spaces
-from gym_exchange.gym_engine import Engine, Portfolio
+from gym_exchange.gym_engine import EngineContinuous, PortfolioContinuous
 import numpy as np
 import pandas as pd
 
 
-class StockExchange(gym.Env):
+class StockExchangeContinuous(gym.Env):
     metadata = {'render.modes': ['human']}
 
     # Keep tickers in a list or an iterable...
     tickers = ['aapl', 'amd', 'msft', 'intc', 'd', 'sbux', 'atvi',
                'ibm', 'ual', 'vrsn', 't', 'mcd', 'vz']
     start_date = '2013-09-15'
-    num_days_to_iterate = 1000
-    num_state_space = 20
-    # if Portfolio, set it to length of tickers
-    # else, must be odd
+    num_days_to_iterate = 100
+    num_days_in_state = 20
     num_action_space = len(tickers)
     # no_action_index is truly no_action only if it's not a Portfolio
     no_action_index = num_action_space//2
     today = 0
     render = False
     # set to None when not using Portfolio
-    action_space_min = 0.0
+    action_space_min = -1.0
     action_space_max = 1.0
     # For each ticker state: ohlc
     num_state_per_ticker = 4
 
     def __init__(self, seed=None):
 
-        self.ticker_length = len(self.tickers)
         # Could manually throw in options eventually...
-        self.portfolio = self.ticker_length > 1
+        self.portfolio = self.num_action_space > 1
         self._seed = seed
 
         if self.portfolio:
-            assert self.num_action_space == self.ticker_length
             assert self.action_space_min is not None
             assert self.action_space_max is not None
-            self.env = Portfolio(self.tickers, self.start_date, self.num_days_to_iterate,
-                                 self.today, seed, render=self.render,
-                                 action_space_min=self.action_space_min,
-                                 action_space_max=self.action_space_max)
+            self.env = PortfolioContinuous(self.tickers, self.start_date,
+                                           self.num_days_to_iterate,
+                                           self.today, seed, render=self.render,
+                                           action_space_min=self.action_space_min,
+                                           action_space_max=self.action_space_max)
         else:
-            assert self.num_action_space > 2, 'NUM_ACTION_SPACE SHOULD BE GREATER THAN 2'
             assert self.num_action_space % 2 != 0, 'NUM_ACTION_SPACE MUST BE ODD TO HAVE NO ACTION INDEX'
-            self.env = Engine(self.tickers, self.start_date, self.num_days_to_iterate,
-                              self.today, seed,
-                              num_action_space=self.num_action_space, render=self.render)
+            self.env = EngineContinuous(self.tickers, self.start_date,
+                                        self.num_days_to_iterate,
+                                        self.today, seed,
+                                        num_action_space=self.num_action_space,
+                                        render=self.render)
 
-        self.action_space = spaces.Box(self.action_space_min, self.action_space_max, (self.ticker_length, ))
-        # self.action_space = spaces.Discrete(self.env.moves_available())
-        self.observation_space = spaces.Box(-1.0, 1.0, (self.num_state_space, self.ticker_length), dtype=np.float)
+        self.action_space = spaces.Box(self.action_space_min, self.action_space_max,
+                                       (self.num_action_space, ), np.float32)
+        self.observation_space = spaces.Box(-1.0, 1.0,
+                                            (self.num_days_in_state,
+                                             self.num_action_space * self.num_state_per_ticker),
+                                            dtype=np.float32)
         self.state = self.get_running_state()
         self.reset()
 
@@ -70,22 +71,19 @@ class StockExchange(gym.Env):
         self.env.render()
 
     def _initialize_state(self):
-        for _ in range(self.num_state_space - 1):
+        for _ in range(self.num_days_in_state - 1):
             if self.portfolio:
-                random_moves = np.random.randint(0, self.moves_available())
-                next_state, reward, done, _ = self.step(random_moves)
+                zero_action = [0.0] * self.num_action_space
+                next_state, reward, done, _ = self.step(zero_action)
             else:
-                next_state, reward, done, _ = self.step([self.no_action_index] * self.ticker_length)
+                next_state, reward, done, _ = self.step([self.no_action_index] * self.num_action_space)
                 assert reward == 0.0, f'Reward is somehow {reward}'
-
-    def moves_available(self):
-        return self.env.moves_available()
 
     def __repr__(self):
         return repr(self.env)
 
     def get_running_state(self):
-        return np.zeros((self.num_state_space, self.num_state_per_ticker * self.ticker_length))
+        return np.zeros((self.num_days_in_state, self.num_state_per_ticker * self.num_action_space))
 
     def add_new_state(self, new_states_to_add):
         assert isinstance(new_states_to_add, list), type(new_states_to_add)

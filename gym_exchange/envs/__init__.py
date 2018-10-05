@@ -1,1 +1,2 @@
 from gym_exchange.envs.stock_exchange import StockExchange
+from gym_exchange.envs.stock_exchange_continuous import StockExchangeContinuous

@@ -136,5 +136,5 @@ class Ticker:
         # axis[2].scatter(self.today, self.accumulated_pnl)
         axis[1].set_ylabel(f'Daily return from Agent')
         axis[1].set_xlabel('Time step')
-        axis[1].scatter(self.today, self.df.pnl[self.today-1])
-        plt.pause(0.001)
+        axis[1].scatter(self.today, self.accumulated_pnl)
+        plt.pause(0.0001)

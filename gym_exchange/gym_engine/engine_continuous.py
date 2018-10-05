@@ -2,17 +2,19 @@ import itertools
 import functools
 import matplotlib.pyplot as plt
 import numpy as np
-from gym_engine.ticker import Ticker
-from gym_engine.utils import iterable
+from gym_exchange.gym_engine import TickerContinuous
+from gym_exchange.gym_engine import iterable
 
 plt.ion()
 
 
-class Engine:
+class EngineContinuous:
     def __init__(self, tickers, start_date, num_days_iter,
-                 today=None, seed=None, num_action_space=3, render=False, *args, **kwargs):
+                 today=None, seed=None, num_action_space=3,
+                 render=False, *args, **kwargs):
         if seed: np.random.seed(seed)
         if not iterable(tickers): tickers = [tickers]
+
         self.tickers = self._get_tickers(tickers, start_date, num_days_iter,
                                          today, num_action_space, *args, **kwargs)
         self.reset_game()
@@ -28,7 +30,7 @@ class Engine:
 
     def _get_tickers(self, tickers, start_date, num_days_iter,
                      today, num_action_space, *args, **kwargs):
-        return [Ticker(ticker, start_date, num_days_iter, today, num_action_space, *args, **kwargs)
+        return [TickerContinuous(ticker, start_date, num_days_iter, today, num_action_space, *args, **kwargs)
                 for ticker in tickers]
 
     def _render(self, render):
