@@ -1,7 +1,6 @@
 # Gym-Stock-Exchange
 
 Implementing a `stock-exchange` environment in `OPEN-AI`'s [gym](https://gym.openai.com/) environment.
-There exists two version, one for `discrete` action space, and the other for `continuous`.
 
 ### Getting Started
 To get started, you’ll need to have `Python 3.5+` installed. 
@@ -14,8 +13,8 @@ Once `gym` is installed, clone this repository, then run
 ```
 python3 demo_exchange.py
 ```
-There are two versions, `discrete` and `continuous` action spaces - 
-agents may require one or the other.
+There are two versions, `discrete` and `continuous` action space - 
+agents may require one or the other - DDPG vs naive DQN, for example.
 `env = gym.make('game-stock-exchange-v0')` is for a `discrete` environment.
 `env = gym.make('game-stock-exchange-continuous-v0')` is for a `continuous` environment.
 
