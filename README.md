@@ -14,7 +14,13 @@ Once `gym` is installed, clone this repository, then run
 ```
 python3 demo_exchange.py
 ```
-Explain what is where
+There are two versions, `discrete` and `continuous` action spaces - 
+agents may require one or the other.
+`env = gym.make('game-stock-exchange-v0')` is for a `discrete` environment.
+`env = gym.make('game-stock-exchange-continuous-v0')` is for a `continuous` environment.
+
+Code for [continuous](gym_exchange/envs/stock_exchange_continuous.py) and
+[discrete](gym_exchange/envs/stock_exchange.py) are found here.
 
 ### `Tensorflow`
 If you want to integrate `reinforcement learning agents`, I recommend using
