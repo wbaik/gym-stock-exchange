@@ -9,8 +9,7 @@ class StockExchangeContinuous(gym.Env):
     metadata = {'render.modes': ['human']}
 
     # Keep tickers in a list or an iterable...
-    tickers = ['aapl', 'amd', 'msft', 'intc', 'd', 'sbux', 'atvi',
-               'ibm', 'ual', 'vrsn', 't', 'mcd', 'vz']
+    tickers = ['aapl',]
     start_date = '2013-09-15'
     num_days_to_iterate = 100
     num_days_in_state = 20

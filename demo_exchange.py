@@ -35,9 +35,8 @@ if __name__ == '__main__':
     for i in range(300):
         action, _states = model.predict(obs)
         obs, rewards, dones, info = env.step(action)
-        print(action)
-        actions[action[0]] += 1
-        pnl[action.item()] += rewards
+        actions[action[0].item()] += 1
+        pnl[action[0].item()] += rewards
         total_rewards += rewards
         if dones:
             break
