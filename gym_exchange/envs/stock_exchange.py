@@ -29,13 +29,11 @@ class StockExchange(gym.Env):
 
     def __init__(self, seed=None):
 
-        self.ticker_length = len(self.tickers)
         # Could manually throw in options eventually...
-        self.portfolio = self.ticker_length > 1
+        self.portfolio = self.num_action_space > 1
         self._seed = seed
 
         if self.portfolio:
-            assert self.num_action_space == self.ticker_length
             assert self.action_space_min is not None
             assert self.action_space_max is not None
             self.env = Portfolio(self.tickers, self.start_date, self.num_days_to_iterate,
@@ -49,9 +47,9 @@ class StockExchange(gym.Env):
                               self.today, seed,
                               num_action_space=self.num_action_space, render=self.render)
 
-        self.action_space = spaces.Box(self.action_space_min, self.action_space_max, (self.ticker_length, ))
+        self.action_space = spaces.Box(self.action_space_min, self.action_space_max, (self.num_action_space,))
         # self.action_space = spaces.Discrete(self.env.moves_available())
-        self.observation_space = spaces.Box(-1.0, 1.0, (self.num_state_space, self.ticker_length), dtype=np.float)
+        self.observation_space = spaces.Box(-1.0, 1.0, (self.num_state_space, self.num_action_space), dtype=np.float)
         self.state = self.get_running_state()
         self.reset()
 
@@ -75,7 +73,7 @@ class StockExchange(gym.Env):
                 random_moves = np.random.randint(0, self.moves_available())
                 next_state, reward, done, _ = self.step(random_moves)
             else:
-                next_state, reward, done, _ = self.step([self.no_action_index] * self.ticker_length)
+                next_state, reward, done, _ = self.step([self.no_action_index] * self.num_action_space)
                 assert reward == 0.0, f'Reward is somehow {reward}'
 
     def moves_available(self):
@@ -85,7 +83,7 @@ class StockExchange(gym.Env):
         return repr(self.env)
 
     def get_running_state(self):
-        return np.zeros((self.num_state_space, self.num_state_per_ticker * self.ticker_length))
+        return np.zeros((self.num_state_space, self.num_state_per_ticker * self.num_action_space))
 
     def add_new_state(self, new_states_to_add):
         assert isinstance(new_states_to_add, list), type(new_states_to_add)

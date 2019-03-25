@@ -9,11 +9,11 @@ from stable_baselines import A2C
 
 if __name__ == '__main__':
     # Create and wrap the environment
-    env = gym.make('game-stock-exchange-v0')
+    env = gym.make('game-stock-exchange-continuous-v0')
     env = DummyVecEnv([lambda: env])
 
     model = A2C(MlpPolicy, env, ent_coef=0.1, verbose=1)
-    model = A2C.load("a2c_gym_exchange", env=env)
+    # model = A2C.load("a2c_gym_exchange", env=env)
     model.learning_rate = 1e-7
 
     # Train the agent
@@ -35,7 +35,8 @@ if __name__ == '__main__':
     for i in range(300):
         action, _states = model.predict(obs)
         obs, rewards, dones, info = env.step(action)
-        actions[action.item()] += 1
+        print(action)
+        actions[action[0]] += 1
         pnl[action.item()] += rewards
         total_rewards += rewards
         if dones:
