@@ -1,10 +1,7 @@
-from exchange.components import Stock, ActionModule, DatesModule
+from exchange.components import ActionModule, ActionResult, DatesModule, Stock
 from exchange.utils import get_tickers
 from injector import Module, Injector, inject
 from typing import List, NewType
-
-
-State = NewType('state', float)
 
 
 class PortfolioModule(Module):
@@ -25,8 +22,8 @@ class Portfolio:
     def __init__(self, stocks: List[Stock]):
         self.stocks = stocks
 
-    def step(self, actions) -> List[State]:
-        pass
+    def step(self, actions) -> List[ActionResult]:
+        return [stock.step(action) for stock, action in zip(self.stocks, actions)]
 
     def reset(self):
         pass

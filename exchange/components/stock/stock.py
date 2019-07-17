@@ -1,5 +1,6 @@
 import yaml
 
+from exchange.components import ActionResult
 from exchange.components.action_space import ActionSpace, ActionModule
 from exchange.components.dates_trading import DatesTrading, DatesModule
 from exchange.utils import YAML_FILE_PATH
@@ -19,6 +20,9 @@ class Stock:
 
     def __repr__(self) -> str:
         return self.ticker
+
+    def step(self, action) -> ActionResult:
+        pass
 
 
 if __name__ == '__main__':

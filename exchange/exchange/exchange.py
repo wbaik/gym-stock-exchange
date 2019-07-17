@@ -1,21 +1,24 @@
-import gym
 from exchange.portfolio import Portfolio
+from injector import inject
+
+import gym
 
 
 class Exchange(gym.Env):
 
-    def __init__(self, config) -> None:
+    @inject
+    def __init__(self, portfolio: Portfolio):
         super().__init__()
-        self.portfolio = Portfolio(config)
+        self.portfolio = portfolio
 
-    def step(self, action):
-        self.portfolio.step(action)
+    def step(self, actions):
+        return self.portfolio.step(actions)
 
     def reset(self):
         self.portfolio.reset()
 
     def render(self, mode='human'):
-        pass
+        raise NotImplementedError
 
     def close(self):
         super().close()
