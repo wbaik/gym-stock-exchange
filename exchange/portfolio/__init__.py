@@ -1,1 +1,1 @@
-from exchange.portfolio.portfolio import Portfolio
+from exchange.portfolio.portfolio import Portfolio, PortfolioModule

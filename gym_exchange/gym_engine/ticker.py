@@ -15,7 +15,7 @@ class Ticker:
         self.num_days_iter = num_days_iter
         self.df, self.dates = self._load_df(test)
         self.action_space = np.linspace(action_space_min, action_space_max, num_actions)
-        self.today = 0 if today is None else today
+        self.today = today if today else 0
         self._data_valid()
         self.current_position = self.accumulated_pnl = 0.0
 
