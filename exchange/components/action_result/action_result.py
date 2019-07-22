@@ -18,6 +18,7 @@ class ActionResult:
                      (for example, it might contain the raw probabilities behind the environment’s last state change).
                      However, official evaluations of your agent are not allowed to use this for learning.
     '''
+    # observation is equivalent to subsequent price
     subsequent_price: float
     reward: float
     done: bool

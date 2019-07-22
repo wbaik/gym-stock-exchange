@@ -21,6 +21,10 @@ class Stock:
     def __repr__(self) -> str:
         return self.ticker
 
+    def initialize_market_data(self):
+
+
+
     def step(self, action) -> ActionResult:
         pass
 
