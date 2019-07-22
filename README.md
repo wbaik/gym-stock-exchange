@@ -19,7 +19,7 @@ agents may require one or the other - DDPG vs naive DQN, for example.
 `env = gym.make('game-stock-exchange-continuous-v0')` is for a `continuous` environment.
 
 Code for [continuous](gym_exchange/envs/stock_exchange_continuous.py) and
-[discrete](gym_exchange/envs/stock_exchange.py) are found here.
+[discrete](gym_exchange/envs/stock_exchange_discrete.py) are found here.
 
 ### `TensorFlow`
 If you want to integrate `reinforcement learning agents`, I recommend using

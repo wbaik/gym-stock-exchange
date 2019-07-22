@@ -1,11 +1,11 @@
 from itertools import count
 import numpy as np
 import pandas as pd
-from gym_exchange.gym_engine import Engine
+from gym_exchange.gym_engine import EngineDiscrete
 from gym_exchange.gym_engine import iterable
 
 
-class Portfolio(Engine):
+class PortfolioDiscrete(EngineDiscrete):
     def __init__(self, tickers, start_date, num_days_iter,
                  today=None, seed=None, render=False,
                  action_space_min=0.0, action_space_max=1.0):
@@ -60,4 +60,4 @@ class Portfolio(Engine):
 
         actions = [np.argwhere(np.isclose(self.action_space, position)).item()
                    for position in positions]
-        return super(Portfolio, self).step(actions)
+        return super(PortfolioDiscrete, self).step(actions)

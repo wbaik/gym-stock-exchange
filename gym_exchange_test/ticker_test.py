@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from gym_exchange.gym_engine import Ticker
+from gym_exchange.gym_engine import TickerDiscrete
 
 
 class TestTicker(unittest.TestCase):
@@ -9,9 +9,9 @@ class TestTicker(unittest.TestCase):
     def setUp(self):
         self.num_actions = 3
         self.num_iter = self.num_actions * 4
-        self.ticker = Ticker('aapl', '2015-01-01', self.num_iter,
-                             num_actions=self.num_actions,
-                             test=True)
+        self.ticker = TickerDiscrete('aapl', '2015-01-01', self.num_iter,
+                                     num_actions=self.num_actions,
+                                     test=True)
 
     def tearDown(self):
         del self.ticker

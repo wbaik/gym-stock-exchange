@@ -1,27 +1,23 @@
-import gym
 import numpy as np
 import pandas as pd
 
 from gym_exchange.gym_engine.ticker_base import TickerBase
 
 
-class TickerContinuous(TickerBase):
-    # Don't delete num_actions just yet, need to go fix all others..
-    #   Especially when constructing in Engine
+class TickerDiscrete(TickerBase):
     def __init__(self,
                  ticker,
                  start_date,
                  num_days_iter,
                  today=None,
+                 num_actions=3,
                  test=False,
                  action_space_min=-1.0,
                  action_space_max=1.0):
-        self.action_space = gym.spaces.Box(action_space_min,
-                                           action_space_max,
-                                           (1, ),
-                                           dtype=np.float32)
+        self.action_space = np.linspace(action_space_min, action_space_max, num_actions)
         super().__init__(ticker, start_date, num_days_iter, today, test)
 
+    # Discrete is different from Continuous in Action Space
     # 1. Reward is tricky
     # 2. Should invalid action be penalized?
     def step(self, action):
@@ -38,13 +34,15 @@ class TickerContinuous(TickerBase):
 
             # Think about accumulating the scores...
             self.accumulated_pnl += reward
-            self.df.position[self.today] = self.current_position = action
-            self.today += 1
+            self.df.position[self.today] = self.current_position = self.action_space[action]
 
+            self.today += 1
+            # Think about how to re-allocate the reward
             return reward, False
         else:
             self.current_position = 0.0
             return 0.0, True
 
     def valid_action(self, action):
-        return self.action_space.low <= action <= self.action_space.high
+        current_position = self.df.position[self.today-1]
+        return -1.0 <= current_position + self.action_space[action] <= 1.0

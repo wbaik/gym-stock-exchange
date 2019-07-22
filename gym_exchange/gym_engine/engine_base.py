@@ -2,21 +2,24 @@ import itertools
 import functools
 import matplotlib.pyplot as plt
 import numpy as np
-from gym_exchange.gym_engine import Ticker
 from gym_exchange.gym_engine import iterable
 
 plt.ion()
 
 
-class Engine:
-    def __init__(self, tickers, start_date, num_days_iter,
-                 today=None, seed=None, num_action_space=3,
-                 render=False, *args, **kwargs):
-        if seed: np.random.seed(seed)
-        if not iterable(tickers): tickers = [tickers]
+class EngineBase:
+    def __init__(self,
+                 tickers,
+                 seed=None,
+                 render=False,
+                 *args,
+                 **kwargs):
 
-        self.tickers = self._get_tickers(tickers, start_date, num_days_iter,
-                                         today, num_action_space, *args, **kwargs)
+        if seed:
+            np.random.seed(seed)
+        if not iterable(tickers):
+            tickers = [tickers]
+
         self.reset_game()
 
         if render:
@@ -27,11 +30,6 @@ class Engine:
 
     def reset_game(self):
         list(map(lambda ticker: ticker.reset(), self.tickers))
-
-    def _get_tickers(self, tickers, start_date, num_days_iter,
-                     today, num_action_space, *args, **kwargs):
-        return [Ticker(ticker, start_date, num_days_iter, today, num_action_space, *args, **kwargs)
-                for ticker in tickers]
 
     def _render(self, render):
         if render:
